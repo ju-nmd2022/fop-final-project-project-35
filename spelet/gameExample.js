@@ -3,10 +3,10 @@ let bildArray = [];
 let counter = 0;
 
 function preload() {
-  img1 = loadImage("spelet/Artboard2.png");
-  img2 = loadImage("spelet/Artboard3.png");
-  img3 = loadImage("spelet/Artboard4.png");
-  img4 = loadImage("spelet/Artboard5.png");
+  img1 = loadImage("Artboard2.png");
+  img2 = loadImage("Artboard3.png");
+  img3 = loadImage("Artboard4.png");
+  img4 = loadImage("Artboard5.png");
   bildArray.push(img1, img2, img3, img4);
 }
 
