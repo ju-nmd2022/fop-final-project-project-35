@@ -3,7 +3,7 @@ let bildArray = [];
 let counter = 0;
 
 function preload() {
-  img1 = loadImage("Artboard2.png");
+  img1 = loadImage("Artboard1new.png");
   img2 = loadImage("Artboard3.png");
   img3 = loadImage("Artboard4.png");
   img4 = loadImage("Artboard5.png");
@@ -14,9 +14,6 @@ function setup() {
   createCanvas(1000, 1000);
   frameRate(10);
   // Resize the images
-  for (let i = 0; i < bildArray.length; i++) {
-    bildArray[i].resize(bildArray[i].width / 6, bildArray[i].height / 6);
-  }
 }
 
 let bildX = 0;
