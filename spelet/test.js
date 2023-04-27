@@ -14,7 +14,7 @@ let student1 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 let student2 = {
@@ -29,7 +29,7 @@ let student2 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 let student3 = {
@@ -44,7 +44,7 @@ let student3 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 let student4 = {
@@ -59,7 +59,7 @@ let student4 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 let student5 = {
@@ -74,7 +74,7 @@ let student5 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 let student6 = {
@@ -89,7 +89,7 @@ let student6 = {
   dragging: false,
   directionX: 0,
   directionY: 0,
-  maxlife: 30,
+  maxlife: 0,
 };
 
 function preload() {
@@ -151,7 +151,7 @@ let studentNumber = 6;
 
 function setup() {
   createCanvas(screen.width - 30, screen.height - 140);
-  frameRate(3);
+  frameRate(5);
 }
 
 function drawStudents(student) {
@@ -160,8 +160,14 @@ function drawStudents(student) {
 }
 
 function updateStudents(student) {
-  student.x = student.x + Math.random() * 10 - 5;
-  student.y = student.y + Math.random() * 10 - 5;
+  const randomX = Math.random() * 10 - 5;
+  const randomY = Math.random() * 10 - 5;
+
+  if (student.maxlife < 30) {
+    student.x = student.x + randomX;
+    student.y = student.y + randomY;
+  }
+  student.maxlife = student.maxlife + 1;
 }
 
 function spawnStudents() {
@@ -187,7 +193,7 @@ function draw() {
   }
   counter = counter + 1;
   pop();
-  console.log(activeStudents);
+  console.log(student1.maxlife);
 }
 
 draw();
