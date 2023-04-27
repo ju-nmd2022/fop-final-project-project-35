@@ -12,6 +12,9 @@ let student1 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 let student2 = {
@@ -24,6 +27,9 @@ let student2 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 let student3 = {
@@ -36,6 +42,9 @@ let student3 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 let student4 = {
@@ -48,6 +57,9 @@ let student4 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 let student5 = {
@@ -60,6 +72,9 @@ let student5 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 let student6 = {
@@ -72,6 +87,9 @@ let student6 = {
   },
   currentMode: "still",
   dragging: false,
+  directionX: 0,
+  directionY: 0,
+  maxlife: 30,
 };
 
 function preload() {
@@ -129,13 +147,31 @@ function preload() {
 }
 
 let counter = 0;
+let studentNumber = 6;
 
 function setup() {
   createCanvas(screen.width - 30, screen.height - 140);
-  frameRate(6);
+  frameRate(3);
 }
 
-let studentNumber = 16;
+function drawStudents(student) {
+  let img = student.modes.walking[counter % 4];
+  image(img, student.x, student.y);
+}
+
+function updateStudents(student) {
+  student.x = student.x + Math.random() * 10 - 5;
+  student.y = student.y + Math.random() * 10 - 5;
+}
+
+function spawnStudents() {
+  if (activeStudents.length === 0) {
+    for (let i = 0; i < studentNumber; i++) {
+      let student = studentsArray[i % 6];
+      activeStudents.push(student);
+    }
+  }
+}
 
 function draw() {
   background("pink");
@@ -145,21 +181,13 @@ function draw() {
     spawnStudents();
     console.log(activeStudents);
   }
-
-  // pusha in de som ska spela i en ny array
-
-  pop();
-}
-
-function spawnStudents() {
-  for (let i = 0; i < studentNumber; i++) {
-    let student = studentsArray[i % 6];
-    let imageArray = student.modes.walking;
-    student.x = student.x + 5;
-    image(imageArray[counter % 4], student.x, student.y);
-    activeStudents.push(student);
-    counter = counter + 1;
+  for (let student of activeStudents) {
+    updateStudents(student);
+    drawStudents(student);
   }
+  counter = counter + 1;
+  pop();
+  console.log(activeStudents);
 }
 
 draw();
