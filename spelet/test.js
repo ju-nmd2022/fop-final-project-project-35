@@ -286,6 +286,7 @@ function mouseReleased() {
   if (lifted !== undefined) {
     student.currentMode = "still";
     lifted = undefined;
+    rotation = 0;
   }
 }
 
