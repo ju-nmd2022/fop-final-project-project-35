@@ -1,5 +1,6 @@
 let studentsArray = [];
 let activeStudents = [];
+let lifted = undefined;
 
 // Create objects for each student and store their information
 let student1 = {
@@ -9,12 +10,13 @@ let student1 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "walking",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 let student2 = {
@@ -24,12 +26,13 @@ let student2 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "walking",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 let student3 = {
@@ -39,12 +42,13 @@ let student3 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "walking",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 let student4 = {
@@ -54,12 +58,13 @@ let student4 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "walking",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 let student5 = {
@@ -69,12 +74,13 @@ let student5 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "walking",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 let student6 = {
@@ -84,12 +90,13 @@ let student6 = {
   modes: {
     still: [],
     walking: [],
+    dragged: [],
   },
   currentMode: "still",
-  dragging: false,
   directionX: 0,
   directionY: 0,
   maxlife: 0,
+  classroom: false,
 };
 
 function preload() {
@@ -151,52 +158,75 @@ function preload() {
 
 let counter = 0;
 let studentNumber = 10;
-let lifeTimer = 20;
+let lifeTimer = 300;
 
 function setup() {
-  createCanvas(screen.width - 30, screen.height - 140);
-  frameRate(10);
+  createCanvas(screen.width - 30, screen.height - 170);
+  frameRate(60);
 }
+
+let rotation = 0;
 
 function drawStudents(student) {
   if (student.currentMode === "walking") {
-    let img = student.modes.walking[counter % 4];
+    let img = student.modes.walking[Math.floor(counter / 6) % 4];
     image(img, student.x, student.y);
-  } else {
+  } else if (student.currentMode === "still") {
     let img = student.modes.still[0];
     image(img, student.x, student.y);
+  } else if (student.currentMode === "dragged") {
+    let img = student.modes.walking[Math.floor(counter / 3) % 4];
+    push();
+    fill(0, 0, 0, 50);
+    noStroke();
+    ellipse(student.x + 38, student.y + 95, 50, 20);
+    pop();
+    push();
+    translate(student.x + img.width / 2, student.y + img.height / 2);
+    rotate(rotation);
+    rotation = rotation + 0.03 * sin(frameCount * 0.2);
+    image(
+      img,
+      0 - img.width / 2,
+      0 - img.height / 2,
+      img.width * 1.1,
+      img.height * 1.1
+    );
+    pop();
   }
 }
 
 function updateStudents(student) {
-  if (student.maxlife === undefined) {
-    student.maxlife = 0;
-  }
-
-  // change the direction every 30 frames
-  if (student.maxlife % lifeTimer === 0) {
-    student.randomX = Math.random() * 10 - 5;
-    student.randomY = Math.random() * 10 - 5;
-    let state = Math.floor(Math.random() * 2);
-    if (state === 0) {
-      student.currentMode = "walking";
-    } else {
-      student.currentMode = "still";
+  if (student.currentMode !== "dragged") {
+    if (student.maxlife === undefined) {
+      student.maxlife = 0;
     }
-  }
 
-  if (student.maxlife < lifeTimer) {
-    if (student.currentMode === "walking") {
-      student.x = student.x + student.randomX;
-      student.y = student.y + student.randomY;
+    // change the direction every 30 frames
+    if (student.maxlife % lifeTimer === 0) {
+      student.randomX = Math.random() * 3 - 1.5;
+      student.randomY = Math.random() * 3 - 1.5;
+      let state = Math.floor(Math.random() * 2);
+      if (state === 0) {
+        student.currentMode = "walking";
+      } else {
+        student.currentMode = "still";
+      }
     }
-  }
 
-  student.maxlife = student.maxlife + 1;
+    if (student.maxlife < lifeTimer) {
+      if (student.currentMode === "walking") {
+        student.x = student.x + student.randomX;
+        student.y = student.y + student.randomY;
+      }
+    }
 
-  // Reset the counter when 30
-  if (student.maxlife === lifeTimer) {
-    student.maxlife = 0;
+    student.maxlife = student.maxlife + 1;
+
+    // Reset the counter when 30
+    if (student.maxlife === lifeTimer) {
+      student.maxlife = 0;
+    }
   }
 }
 
@@ -229,17 +259,33 @@ function offScreenWalk(student) {
   }
 }
 
-function liftStudents(student) {
-  if (mouseIsPressed === true) {
+function mousePressed() {
+  for (student of activeStudents) {
     if (
       mouseX > student.x &&
       mouseX < student.x + 68 &&
       mouseY > student.y &&
       mouseY < student.y + 80
     ) {
-      student.x = mouseX - 34;
-      student.y = mouseY - 50;
+      lifted = student;
+      student.currentMode = "dragged";
+      console.log(student);
+      break;
     }
+  }
+}
+
+function mouseDragged() {
+  if (lifted !== undefined) {
+    student.x = mouseX - 34;
+    student.y = mouseY - 50;
+  }
+}
+
+function mouseReleased() {
+  if (lifted !== undefined) {
+    student.currentMode = "still";
+    lifted = undefined;
   }
 }
 
@@ -257,10 +303,9 @@ function draw() {
     drawStudents(student);
     //making them move to the other side of screen
     offScreenWalk(student);
-
-    liftStudents(student);
   }
   counter = counter + 1;
+
   pop();
 }
 
