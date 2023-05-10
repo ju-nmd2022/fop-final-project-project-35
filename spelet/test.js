@@ -152,13 +152,21 @@ function preload() {
     student6
   );
 
-  //loading the image of classroom
+  //loadingg the image of classroom
   classroomImage = loadImage("images/classroom.png");
+  //prigress bar
+  progressGarrit = loadImage("images/progressCircle.png");
+  progressGarritSad = loadImage("images/progressCircleSad.png");
+  progressGarritHappy = loadImage("images/progressCircleHappy.png");
 }
 
 let counter = 0;
-let studentNumber = 10;
+let studentNumber = 6;
 let lifeTimer = 300;
+let classroomLifeTimer = 500;
+
+let studentsInClass = 0;
+let clickableButton = false;
 
 function setup() {
   createCanvas(screen.width - 30, screen.height - 170);
@@ -183,8 +191,9 @@ function drawStudents(student) {
     pop();
     push();
     translate(student.x + img.width / 2, student.y + img.height / 2);
+    let rotation = 30 * sin(frameCount * 4.5);
     rotate(rotation);
-    rotation = rotation + 0.03 * sin(frameCount * 0.2);
+
     image(
       img,
       0 - img.width / 2,
@@ -196,6 +205,7 @@ function drawStudents(student) {
   }
 }
 
+//if in classroom change to another lifetimer
 function updateStudents(student) {
   if (student.currentMode !== "dragged") {
     if (student.maxlife === undefined) {
@@ -290,8 +300,104 @@ function mouseReleased() {
   }
 }
 
+// for every student if student.classroom === true then +1 else +0 in a completedStudents variable
+function classroomCheck(student) {
+  if (
+    student.classroom === false &&
+    student.x > 3 &&
+    student.x < 320 &&
+    student.y > 0 &&
+    student.y < 380
+  ) {
+    student.classroom = true;
+    studentsInClass = studentsInClass + 1;
+    console.log(studentsInClass);
+  } else if (
+    student.classroom === true &&
+    (student.x < 3 || student.x > 320 || student.y < 0 || student.y > 380)
+  ) {
+    student.classroom = false;
+    studentsInClass = studentsInClass - 1;
+    console.log(studentsInClass);
+  }
+}
+//comparing array order
+function compareNumbers(a, b) {
+  return a.y - b.y;
+}
+
+function drawProgressBar() {
+  noStroke();
+  if (studentsInClass / activeStudents.length === 1) {
+    image(
+      progressGarritHappy,
+      width - 300,
+      235,
+      progressGarritHappy.width * 0.7,
+      progressGarritHappy.height * 0.7
+    );
+  } else if (studentsInClass / activeStudents.length > 0.5) {
+    image(
+      progressGarrit,
+      width - 300,
+      235,
+      progressGarrit.width * 0.7,
+      progressGarrit.height * 0.7
+    );
+  } else {
+    image(
+      progressGarritSad,
+      width - 300,
+      235,
+      progressGarrit.width * 0.7,
+      progressGarrit.height * 0.7
+    );
+  }
+
+  angleMode(DEGREES);
+  push();
+  fill("white");
+  stroke("black");
+  strokeWeight(2);
+  circle(width - 196, height - 110, 160, 160);
+  pop();
+  push();
+  fill(130, 34, 24);
+  arc(
+    width - 196,
+    height - 110,
+    158,
+    158,
+    -90,
+    (studentsInClass / activeStudents.length) * 270
+  );
+  pop();
+  push();
+  fill("yellow");
+  circle(width - 196, height - 110, 120, 120);
+  pop();
+  //text
+  textSize(35);
+  text(studentsInClass, width - 210, height - 130);
+  textSize(20);
+  text(" of ", width - 210, height - 105);
+  textSize(35);
+  text(activeStudents.length, width - 210, height - 70);
+}
+
+function activateButton() {
+  if (studentsInClass / activeStudents.length === 1) {
+    console.log("yeee");
+    clickableButton = true;
+  }
+}
+
 function draw() {
   background("pink");
+  activateButton();
+
+  push();
+
   push();
   noSmooth();
   image(classroomImage, 50, 50);
@@ -299,15 +405,24 @@ function draw() {
   if (keyIsPressed === true) {
     spawnStudents();
   }
+
+  activeStudents.sort(compareNumbers);
+
   for (let student of activeStudents) {
     updateStudents(student);
     drawStudents(student);
     //making them move to the other side of screen
     offScreenWalk(student);
+    classroomCheck(student);
+  }
+  if (lifted !== undefined) {
+    drawStudents(lifted);
   }
   counter = counter + 1;
 
   pop();
+
+  drawProgressBar();
 }
 
 draw();
