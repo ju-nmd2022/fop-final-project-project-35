@@ -332,7 +332,7 @@ function drawProgressBar() {
     image(
       progressGarritHappy,
       width - 300,
-      235,
+      height - 315,
       progressGarritHappy.width * 0.7,
       progressGarritHappy.height * 0.7
     );
@@ -340,7 +340,7 @@ function drawProgressBar() {
     image(
       progressGarrit,
       width - 300,
-      235,
+      height - 315,
       progressGarrit.width * 0.7,
       progressGarrit.height * 0.7
     );
@@ -348,7 +348,7 @@ function drawProgressBar() {
     image(
       progressGarritSad,
       width - 300,
-      235,
+      height - 315,
       progressGarrit.width * 0.7,
       progressGarrit.height * 0.7
     );
