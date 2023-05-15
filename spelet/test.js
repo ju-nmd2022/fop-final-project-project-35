@@ -1,6 +1,7 @@
 let studentsArray = [];
 let activeStudents = [];
 let lifted = undefined;
+let gameState = startScreen;
 
 // Create objects for each student and store their information
 let student1 = {
@@ -161,16 +162,50 @@ function preload() {
 }
 
 let counter = 0;
-let studentNumber = 6;
+let studentNumber = 1;
 let lifeTimer = 300;
 let classroomLifeTimer = 500;
 
 let studentsInClass = 0;
 let clickableButton = false;
 
+function startPage() {}
+
 function setup() {
   createCanvas(screen.width - 30, screen.height - 170);
   frameRate(60);
+}
+
+function startScreen() {
+  background(0, 0, 0);
+  circle(width / 2, height / 2 - 50, 200);
+  ellipse(width - width / 4, height / 3, 500, 200);
+  text("hello, blablabla bla", width - width / 4 - 150, height / 3);
+  push();
+  textSize(60);
+  fill(255, 255, 255);
+  text(studentNumber, width / 2, height - 185);
+  pop();
+
+  let startButton = createButton("start");
+  startButton.position(width / 2 - 70, height - 150);
+  startButton.style("border-radius", "100px");
+  startButton.size(190, 60);
+  startButton.style("fontSize", "40px");
+
+  let increaseButton = createButton("+");
+  increaseButton.position(width / 2 + 70, height - 220);
+  increaseButton.style("border-radius", "100px");
+  increaseButton.style("fontSize", "40px");
+  increaseButton.size(50, 50);
+  //fix
+  increaseButton.mousePressed((studentNumber = studentNumber + 1));
+
+  let decreaseButton = createButton("-");
+  decreaseButton.position(width / 2 - 70, height - 220);
+  decreaseButton.style("border-radius", "100px");
+  decreaseButton.style("fontSize", "40px");
+  decreaseButton.size(50, 50);
 }
 
 let rotation = 0;
@@ -270,6 +305,11 @@ function offScreenWalk(student) {
 }
 
 function mousePressed() {
+  let distButton = dist(width - 196, height - 110, mouseX, mouseY);
+  if (clickableButton === true && distButton < 120) {
+    //gameState = startScreen;
+    console.log("bla");
+  }
   for (student of activeStudents) {
     if (
       mouseX > student.x &&
@@ -389,6 +429,8 @@ function activateButton() {
   if (studentsInClass / activeStudents.length === 1) {
     console.log("yeee");
     clickableButton = true;
+  } else {
+    clickableButton = false;
   }
 }
 
@@ -423,6 +465,9 @@ function draw() {
   pop();
 
   drawProgressBar();
+  if (gameState === startScreen) {
+    startScreen();
+  }
 }
 
 draw();
