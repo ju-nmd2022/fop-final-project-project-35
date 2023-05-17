@@ -1,7 +1,7 @@
 let studentsArray = [];
 let activeStudents = [];
 let lifted = undefined;
-let gameState = startScreen;
+let gameState = "startScreen";
 
 // Create objects for each student and store their information
 let student1 = {
@@ -23,7 +23,7 @@ let student1 = {
 let student2 = {
   name: 2,
   x: 0,
-  y: 100,
+  y: 500,
   modes: {
     still: [],
     walking: [],
@@ -38,7 +38,7 @@ let student2 = {
 
 let student3 = {
   name: 3,
-  x: 0,
+  x: 400,
   y: 200,
   modes: {
     still: [],
@@ -54,7 +54,7 @@ let student3 = {
 
 let student4 = {
   name: 4,
-  x: 0,
+  x: 500,
   y: 300,
   modes: {
     still: [],
@@ -86,7 +86,7 @@ let student5 = {
 
 let student6 = {
   name: 6,
-  x: 0,
+  x: 900,
   y: 500,
   modes: {
     still: [],
@@ -175,37 +175,89 @@ function setup() {
   createCanvas(screen.width - 30, screen.height - 170);
   frameRate(60);
 }
+let startButton;
+let increaseButton;
+let decreaseButton;
 
 function startScreen() {
   background(0, 0, 0);
+
+  textFont("fantasy");
   circle(width / 2, height / 2 - 50, 200);
   ellipse(width - width / 4, height / 3, 500, 200);
   text("hello, blablabla bla", width - width / 4 - 150, height / 3);
+
   push();
   textSize(60);
+
   fill(255, 255, 255);
   text(studentNumber, width / 2, height - 185);
   pop();
 
-  let startButton = createButton("start");
-  startButton.position(width / 2 - 70, height - 150);
-  startButton.style("border-radius", "100px");
-  startButton.size(190, 60);
-  startButton.style("fontSize", "40px");
+  //startbutton
+  push();
 
-  let increaseButton = createButton("+");
-  increaseButton.position(width / 2 + 70, height - 220);
-  increaseButton.style("border-radius", "100px");
-  increaseButton.style("fontSize", "40px");
-  increaseButton.size(50, 50);
-  //fix
-  increaseButton.mousePressed((studentNumber = studentNumber + 1));
+  textSize(40);
+  rect(width / 2 - 95, height - 150, 190, 60, 100);
+  fill(255, 40, 20);
+  text("START", width / 2 - 63, height - 105);
+  pop();
 
-  let decreaseButton = createButton("-");
-  decreaseButton.position(width / 2 - 70, height - 220);
-  decreaseButton.style("border-radius", "100px");
-  decreaseButton.style("fontSize", "40px");
-  decreaseButton.size(50, 50);
+  //increaseButton
+  push();
+
+  textSize(40);
+  ellipse(width / 2 + 80, height - 200, 50, 50);
+  text("+", width / 2 + 68, height - 185);
+  pop();
+
+  //decreaseButton
+  push();
+
+  textSize(40);
+  ellipse(width / 2 - 80, height - 200, 50, 50);
+  text("-", width / 2 - 78, height - 185);
+  pop();
+}
+
+function nextScreen() {
+  background(0, 0, 0);
+
+  textFont("fantasy");
+
+  text("hello, blablabla bla", width - 150, height / 3);
+
+  push();
+  textSize(60);
+
+  fill(255, 255, 255);
+  text(studentNumber, width / 2, height - 185);
+  pop();
+
+  //startbutton
+  push();
+
+  textSize(40);
+  rect(width / 2 - 95, height - 150, 190, 60, 100);
+  fill(255, 40, 20);
+  text("START", width / 2 - 63, height - 105);
+  pop();
+
+  //increaseButton
+  push();
+
+  textSize(40);
+  ellipse(width / 2 + 80, height - 200, 50, 50);
+  text("+", width / 2 + 68, height - 185);
+  pop();
+
+  //decreaseButton
+  push();
+
+  textSize(40);
+  ellipse(width / 2 - 80, height - 200, 50, 50);
+  text("-", width / 2 - 78, height - 185);
+  pop();
 }
 
 let rotation = 0;
@@ -305,9 +357,11 @@ function offScreenWalk(student) {
 }
 
 function mousePressed() {
-  let distButton = dist(width - 196, height - 110, mouseX, mouseY);
-  if (clickableButton === true && distButton < 120) {
-    //gameState = startScreen;
+  let distGarritButton = dist(width - 196, height - 110, mouseX, mouseY);
+  if (clickableButton === true && distGarritButton < 120) {
+    gameState = "nextScreen";
+    activeStudents = [];
+
     console.log("bla");
   }
   for (student of activeStudents) {
@@ -323,7 +377,33 @@ function mousePressed() {
       break;
     }
   }
+  if (gameState === "startScreen" || gameState === "nextScreen") {
+    if (dist(mouseX, mouseY, width / 2 + 80, height - 200) < 25) {
+      studentNumber = studentNumber + 1;
+    }
+    if (
+      dist(mouseX, mouseY, width / 2 - 80, height - 200) < 25 &&
+      studentNumber > 0
+    ) {
+      studentNumber = studentNumber - 1;
+    }
+    if (
+      mouseX > width / 2 - 95 &&
+      mouseX < width / 2 + 95 &&
+      mouseY > height - 150 &&
+      mouseY < height - 90
+    ) {
+      for (student of studentsArray) {
+        student.x = Math.random() * width;
+        student.y = Math.random() * height;
+      }
+      spawnStudents();
+
+      gameState = "gameScreen";
+    }
+  }
 }
+width / 2 - 95, height - 150, 190, 60;
 
 function mouseDragged() {
   if (lifted !== undefined) {
@@ -434,39 +514,64 @@ function activateButton() {
   }
 }
 
+function runFromCursor() {
+  for (let i = 0; i < activeStudents.length; i++) {
+    let student = activeStudents[i];
+    if (lifted === undefined && student.currentMode === "walking") {
+      let x = student.x;
+      let y = student.y;
+
+      // Check the distance between the student and the mouse
+      let distance = dist(mouseX, mouseY, x, y);
+
+      // Set the direction based on the mouse position
+      let directionX = mouseX < x ? 1 : -1; // -1 for left, 1 for right
+      let directionY = mouseY < y ? 1 : -1; // -1 for left, 1 for right
+
+      // Update the student's position based on the distance and direction
+      if (distance < 100) {
+        student.x += directionX * 1.5; // Adjust the speed of movement as needed
+        student.y += directionY * 1.5;
+      }
+    }
+  }
+}
+
 function draw() {
-  background("pink");
-  activateButton();
-
-  push();
-
-  push();
-  noSmooth();
-  image(classroomImage, 50, 50);
-
-  if (keyIsPressed === true) {
-    spawnStudents();
-  }
-
-  activeStudents.sort(compareNumbers);
-
-  for (let student of activeStudents) {
-    updateStudents(student);
-    drawStudents(student);
-    //making them move to the other side of screen
-    offScreenWalk(student);
-    classroomCheck(student);
-  }
-  if (lifted !== undefined) {
-    drawStudents(lifted);
-  }
-  counter = counter + 1;
-
-  pop();
-
-  drawProgressBar();
-  if (gameState === startScreen) {
+  if (gameState === "startScreen") {
     startScreen();
+  } else if (gameState === "gameScreen") {
+    background("pink");
+    activateButton();
+
+    push();
+
+    push();
+    noSmooth();
+    image(classroomImage, 50, 50);
+
+    activeStudents.sort(compareNumbers);
+
+    //make them run
+
+    runFromCursor();
+    for (let student of activeStudents) {
+      updateStudents(student);
+      drawStudents(student);
+      //making them move to the other side of screen
+      offScreenWalk(student);
+      classroomCheck(student);
+    }
+    if (lifted !== undefined) {
+      drawStudents(lifted);
+    }
+    counter = counter + 1;
+
+    pop();
+
+    drawProgressBar();
+  } else if (gameState === "nextScreen") {
+    nextScreen();
   }
 }
 
