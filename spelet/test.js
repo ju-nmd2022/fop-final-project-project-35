@@ -184,8 +184,12 @@ function setup() {
 
 const backgroundSound = document.createElement("audio");
 const backgroundSoundSource = document.createElement("source");
+
 const talkingGarrit = document.createElement("audio");
 const talkingGarritSource = document.createElement("source");
+
+const happySound = document.createElement("audio");
+const happySoundSource = document.createElement("source");
 
 function backgroundMusicFunction() {
   backgroundSoundSource.setAttribute("src", "sound/Orient - SefChol.mp3");
@@ -218,6 +222,22 @@ function talkingGarritFunction() {
 }
 
 talkingGarritFunction();
+
+function happySoundFunction() {
+  happySoundSource.setAttribute("src", "sound/happy.mp3");
+  happySoundSource.setAttribute("type", "audio/mpeg");
+  happySound.appendChild(happySoundSource);
+  document.body.appendChild(happySound);
+
+  happySound.currentTime = 0;
+
+  happySound.addEventListener("ended", function () {
+    happySound.currentTime = 0;
+    happySound.play();
+  });
+
+  happySound.play();
+}
 
 let startButton;
 let increaseButton;
@@ -525,6 +545,7 @@ function mousePressed() {
     activeStudents = [];
     backgroundSound.pause();
     talkingGarrit.pause();
+    happySoundFunction();
   }
   for (student of activeStudents) {
     if (
@@ -564,6 +585,7 @@ function mousePressed() {
       gameState = "gameScreen";
       backgroundMusicFunction();
       talkingGarrit.pause();
+      happySound.pause();
     }
   }
 }
