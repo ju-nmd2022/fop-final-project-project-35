@@ -1,5 +1,6 @@
 let studentsArray = [];
 let activeStudents = [];
+let talkingGarritArray = [];
 let lifted = undefined;
 let gameState = "startScreen";
 
@@ -159,6 +160,13 @@ function preload() {
   progressGarrit = loadImage("images/progressCircle.png");
   progressGarritSad = loadImage("images/progressCircleSad.png");
   progressGarritHappy = loadImage("images/progressCircleHappy.png");
+
+  //talking garrit
+  talkingGarrit1 = loadImage("images/garritTalk1.png");
+  talkingGarrit2 = loadImage("images/garritTalk2.png");
+  talkingGarrit3 = loadImage("images/garritTalk3.png");
+
+  talkingGarritArray.push(talkingGarrit1, talkingGarrit2, talkingGarrit3);
 }
 
 let counter = 0;
@@ -169,94 +177,248 @@ let classroomLifeTimer = 500;
 let studentsInClass = 0;
 let clickableButton = false;
 
-function startPage() {}
-
 function setup() {
   createCanvas(screen.width - 30, screen.height - 170);
   frameRate(60);
 }
+
+const backgroundSound = document.createElement("audio");
+const backgroundSoundSource = document.createElement("source");
+const talkingGarrit = document.createElement("audio");
+const talkingGarritSource = document.createElement("source");
+
+function backgroundMusicFunction() {
+  backgroundSoundSource.setAttribute("src", "sound/Orient - SefChol.mp3");
+  backgroundSoundSource.setAttribute("type", "audio/mpeg");
+  backgroundSound.appendChild(backgroundSoundSource);
+  document.body.appendChild(backgroundSound);
+
+  backgroundSound.currentTime = 45;
+
+  backgroundSound.addEventListener("ended", function () {
+    backgroundSound.currentTime = 45;
+    backgroundSound.play();
+  });
+
+  backgroundSound.play();
+}
+
+function talkingGarritFunction() {
+  talkingGarritSource.setAttribute("src", "sound/talking.mp3");
+  talkingGarritSource.setAttribute("type", "audio/mpeg");
+  talkingGarrit.appendChild(talkingGarritSource);
+  document.body.appendChild(talkingGarrit);
+
+  talkingGarrit.addEventListener("ended", function () {
+    talkingGarrit.currentTime = 0;
+    talkingGarrit.play();
+  });
+
+  talkingGarrit.play();
+}
+
+talkingGarritFunction();
+
 let startButton;
 let increaseButton;
 let decreaseButton;
 
 function startScreen() {
-  background(0, 0, 0);
+  let garritImg = talkingGarritArray[Math.floor(counter / 16) % 3];
+  image(
+    garritImg,
+    width / 2 - 450,
+    height / 2 - 200,
+    garritImg.width * 1.6,
+    garritImg.height * 1.6
+  );
 
-  textFont("fantasy");
-  circle(width / 2, height / 2 - 50, 200);
-  ellipse(width - width / 4, height / 3, 500, 200);
-  text("hello, blablabla bla", width - width / 4 - 150, height / 3);
+  textFont("monospace");
+  textStyle(BOLD);
+  //circle(width / 2, height / 2 - 50, 200);
+  push();
+  push();
+  stroke(0, 0, 0);
+  strokeWeight(4);
+  beginShape();
+  vertex(width / 2 + 20, height / 2 - 20);
+  vertex(width / 2 + 100, height / 2 - 102);
+  bezierVertex(
+    width / 2 + 100,
+    height / 2 - 102,
+    width / 2 + 85,
+    height / 3 + 5,
+    width / 2 + 80,
+    height / 3 - 30
+  );
+  bezierVertex(
+    width / 2 + 80,
+    height / 3 - 30,
+    width / 2 + 50,
+    height / 3 - 150,
+    width - width / 4,
+    height / 3 - 155
+  );
+  bezierVertex(
+    width - width / 4,
+    height / 3 - 155,
+    width / 2 + 620,
+    height / 3 - 160,
+    width / 2 + 625,
+    height / 3 - 30
+  );
+  bezierVertex(
+    width / 2 + 625,
+    height / 3 - 30,
+    width / 2 + 620,
+    height / 3 + 100,
+    width - width / 4,
+    height / 3 + 95
+  );
+  bezierVertex(
+    width - width / 4,
+    height / 3 + 95,
+    width - width / 4 - 120,
+    height / 3 + 95,
+    width - width / 4 - 220,
+    height / 3 + 50
+  );
+  vertex(width / 2 + 20, height / 2 - 20);
+  endShape();
+  pop();
+  textSize(25);
+  textAlign(CENTER);
+  textLeading(28);
+  text(
+    "Please help me gather all the students so I can start the Lab session!",
+    width - width / 4 - 225,
+    height / 3 - 95,
+    450
+  );
+  pop();
+
+  push();
+  textSize(14);
+  textAlign(CENTER);
+  textStyle(NORMAL);
+  text(
+    "Click and drag the students to the classroom and then press the button when you have catched them all",
+    width - width / 4 - 182,
+    height / 3 + 12,
+    380
+  );
+  pop();
 
   push();
   textSize(60);
-
-  fill(255, 255, 255);
-  text(studentNumber, width / 2, height - 185);
+  stroke(0, 0, 0);
+  strokeWeight(10);
+  fill("white");
+  textAlign(CENTER);
+  text(studentNumber, width / 2 + 1, height - 185);
   pop();
 
   //startbutton
   push();
-
-  textSize(40);
+  strokeWeight(4);
+  textSize(45);
+  fill("darkOrange");
   rect(width / 2 - 95, height - 150, 190, 60, 100);
-  fill(255, 40, 20);
-  text("START", width / 2 - 63, height - 105);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("START", width / 2 - 68, height - 106);
   pop();
 
   //increaseButton
   push();
-
+  fill("darkOrange");
+  strokeWeight(4);
   textSize(40);
   ellipse(width / 2 + 80, height - 200, 50, 50);
-  text("+", width / 2 + 68, height - 185);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("+", width / 2 + 68, height - 187);
   pop();
 
   //decreaseButton
   push();
-
+  fill("darkOrange");
+  strokeWeight(4);
   textSize(40);
   ellipse(width / 2 - 80, height - 200, 50, 50);
-  text("-", width / 2 - 78, height - 185);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("-", width / 2 - 92, height - 189);
   pop();
 }
 
 function nextScreen() {
-  background(0, 0, 0);
-
-  textFont("fantasy");
-
-  text("hello, blablabla bla", width - 150, height / 3);
-
+  textFont("monospace");
+  textAlign(LEFT);
   push();
   textSize(60);
-
-  fill(255, 255, 255);
-  text(studentNumber, width / 2, height - 185);
+  stroke(0, 0, 0);
+  strokeWeight(10);
+  fill("white");
+  textAlign(CENTER);
+  text(studentNumber, width / 2 + 1, height - 185);
   pop();
 
   //startbutton
   push();
-
-  textSize(40);
+  strokeWeight(4);
+  textSize(45);
+  fill("darkOrange");
   rect(width / 2 - 95, height - 150, 190, 60, 100);
-  fill(255, 40, 20);
-  text("START", width / 2 - 63, height - 105);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("START", width / 2 - 68, height - 106);
   pop();
 
   //increaseButton
   push();
-
+  fill("darkOrange");
+  strokeWeight(4);
   textSize(40);
   ellipse(width / 2 + 80, height - 200, 50, 50);
-  text("+", width / 2 + 68, height - 185);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("+", width / 2 + 68, height - 187);
   pop();
 
   //decreaseButton
   push();
-
+  fill("darkOrange");
+  strokeWeight(4);
   textSize(40);
   ellipse(width / 2 - 80, height - 200, 50, 50);
-  text("-", width / 2 - 78, height - 185);
+  fill(255, 255, 255);
+  stroke(0, 0, 0);
+  strokeWeight(8);
+  text("-", width / 2 - 92, height - 189);
+  pop();
+  //text
+  push();
+  noStroke();
+  fill("black");
+  textStyle(BOLD);
+  textSize(55);
+  textAlign(CENTER);
+  textLeading(40);
+  text("Good job!", width / 2 - 310, height / 3 - 95, 650);
+  textSize(30);
+  textStyle(NORMAL);
+  text(
+    "Are you quick enough to handle even more students this time?",
+    width / 2 - 310,
+    height / 3 + 40,
+    650
+  );
   pop();
 }
 
@@ -361,8 +523,8 @@ function mousePressed() {
   if (clickableButton === true && distGarritButton < 120) {
     gameState = "nextScreen";
     activeStudents = [];
-
-    console.log("bla");
+    backgroundSound.pause();
+    talkingGarrit.pause();
   }
   for (student of activeStudents) {
     if (
@@ -400,6 +562,8 @@ function mousePressed() {
       spawnStudents();
 
       gameState = "gameScreen";
+      backgroundMusicFunction();
+      talkingGarrit.pause();
     }
   }
 }
@@ -482,27 +646,38 @@ function drawProgressBar() {
   circle(width - 196, height - 110, 160, 160);
   pop();
   push();
-  fill(130, 34, 24);
+  fill("DarkOrange");
   arc(
     width - 196,
     height - 110,
     158,
     158,
     -90,
-    (studentsInClass / activeStudents.length) * 270
+    (studentsInClass / activeStudents.length) * 360 - 90
   );
   pop();
+  textAlign(CENTER);
   push();
-  fill("yellow");
+  stroke(0, 0, 0);
+  strokeWeight(1.5);
+  fill("LemonChiffon");
   circle(width - 196, height - 110, 120, 120);
   pop();
   //text
   textSize(35);
-  text(studentsInClass, width - 210, height - 130);
+  strokeWeight(5);
+  stroke(0, 0, 0);
+  fill(255, 255, 255);
+  text(studentsInClass, width - 196, height - 130);
   textSize(20);
-  text(" of ", width - 210, height - 105);
+  push();
+  noStroke();
+  textStyle(BOLD);
+  fill(0, 0, 0);
+  text(" of ", width - 196, height - 103);
+  pop();
   textSize(35);
-  text(activeStudents.length, width - 210, height - 70);
+  text(activeStudents.length, width - 196, height - 65);
 }
 
 function activateButton() {
@@ -538,10 +713,11 @@ function runFromCursor() {
 }
 
 function draw() {
+  background("pink");
+  counter = counter + 1;
   if (gameState === "startScreen") {
     startScreen();
   } else if (gameState === "gameScreen") {
-    background("pink");
     activateButton();
 
     push();
@@ -565,7 +741,6 @@ function draw() {
     if (lifted !== undefined) {
       drawStudents(lifted);
     }
-    counter = counter + 1;
 
     pop();
 
