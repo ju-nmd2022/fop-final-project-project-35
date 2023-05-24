@@ -191,6 +191,12 @@ const talkingGarritSource = document.createElement("source");
 const happySound = document.createElement("audio");
 const happySoundSource = document.createElement("source");
 
+const pickSound = document.createElement("audio");
+const pickSoundSource = document.createElement("source");
+
+const placeSound = document.createElement("audio");
+const placeSoundSource = document.createElement("source");
+
 function backgroundMusicFunction() {
   backgroundSoundSource.setAttribute("src", "sound/Orient - SefChol.mp3");
   backgroundSoundSource.setAttribute("type", "audio/mpeg");
@@ -237,6 +243,28 @@ function happySoundFunction() {
   });
 
   happySound.play();
+}
+
+function pickSoundFunction() {
+  pickSoundSource.setAttribute("src", "sound/pick.mp3");
+  pickSoundSource.setAttribute("type", "audio/mpeg");
+  pickSound.appendChild(pickSoundSource);
+  document.body.appendChild(pickSound);
+
+  pickSound.currentTime = 0.78;
+
+  pickSound.play();
+}
+
+function placeSoundFunction() {
+  placeSoundSource.setAttribute("src", "sound/place.mp3");
+  placeSoundSource.setAttribute("type", "audio/mpeg");
+  placeSound.appendChild(placeSoundSource);
+  document.body.appendChild(placeSound);
+
+  placeSound.currentTime = 0.13;
+
+  placeSound.play();
 }
 
 let startButton;
@@ -560,9 +588,11 @@ function mousePressed() {
       mouseY > student.y &&
       mouseY < student.y + 80
     ) {
+      pickSoundFunction();
       lifted = student;
       student.currentMode = "dragged";
       console.log(student);
+
       break;
     }
   }
@@ -589,13 +619,12 @@ function mousePressed() {
       spawnStudents();
 
       gameState = "gameScreen";
-      backgroundMusicFunction();
+      //backgroundMusicFunction();
       talkingGarrit.pause();
       happySound.pause();
     }
   }
 }
-width / 2 - 95, height - 150, 190, 60;
 
 function mouseDragged() {
   if (lifted !== undefined) {
@@ -606,6 +635,7 @@ function mouseDragged() {
 
 function mouseReleased() {
   if (lifted !== undefined) {
+    placeSoundFunction();
     student.currentMode = "still";
     lifted = undefined;
     rotation = 0;
@@ -686,8 +716,16 @@ function drawProgressBar() {
   push();
   stroke(0, 0, 0);
   strokeWeight(1.5);
-  fill("LemonChiffon");
+
+  colorMode(HSB, 100);
+  if (studentsInClass === activeStudents.length) {
+    fill(34, (frameCount % 20) + 10, 85);
+  } else {
+    fill(34, 30, 85);
+  }
+
   circle(width - 196, height - 110, 120, 120);
+
   pop();
   //text
   textSize(35);
