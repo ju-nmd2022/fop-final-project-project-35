@@ -182,9 +182,6 @@ function setup() {
   frameRate(60);
 }
 
-const backgroundSound = document.createElement("audio");
-const backgroundSoundSource = document.createElement("source");
-
 const talkingGarrit = document.createElement("audio");
 const talkingGarritSource = document.createElement("source");
 
@@ -196,22 +193,6 @@ const pickSoundSource = document.createElement("source");
 
 const placeSound = document.createElement("audio");
 const placeSoundSource = document.createElement("source");
-
-function backgroundMusicFunction() {
-  backgroundSoundSource.setAttribute("src", "sound/Orient - SefChol.mp3");
-  backgroundSoundSource.setAttribute("type", "audio/mpeg");
-  backgroundSound.appendChild(backgroundSoundSource);
-  document.body.appendChild(backgroundSound);
-
-  backgroundSound.currentTime = 45;
-
-  backgroundSound.addEventListener("ended", function () {
-    backgroundSound.currentTime = 45;
-    backgroundSound.play();
-  });
-
-  backgroundSound.play();
-}
 
 function talkingGarritFunction() {
   talkingGarritSource.setAttribute("src", "sound/talking.mp3");
