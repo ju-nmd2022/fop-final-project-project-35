@@ -555,12 +555,12 @@ function mousePressed() {
         student.classroom = false;
       }
     }
+    happySoundFunction();
     studentsInClass = 0;
     gameState = "nextScreen";
     activeStudents = [];
     backgroundSound.pause();
     talkingGarrit.pause();
-    happySoundFunction();
   }
   for (student of activeStudents) {
     if (
