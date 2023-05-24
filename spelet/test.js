@@ -262,17 +262,17 @@ function startScreen() {
   strokeWeight(4);
   beginShape();
   vertex(width / 2 + 20, height / 2 - 20);
-  vertex(width / 2 + 100, height / 2 - 102);
+  vertex(width / 2 + 60, height / 2 - 82);
   bezierVertex(
-    width / 2 + 100,
-    height / 2 - 102,
-    width / 2 + 85,
-    height / 3 + 5,
-    width / 2 + 80,
+    width / 2 + 60,
+    height / 2 - 82,
+    width / 2 + 50,
+    height / 3 - 5,
+    width / 2 + 50,
     height / 3 - 30
   );
   bezierVertex(
-    width / 2 + 80,
+    width / 2 + 50,
     height / 3 - 30,
     width / 2 + 50,
     height / 3 - 150,
@@ -541,6 +541,12 @@ function offScreenWalk(student) {
 function mousePressed() {
   let distGarritButton = dist(width - 196, height - 110, mouseX, mouseY);
   if (clickableButton === true && distGarritButton < 120) {
+    for (student of activeStudents) {
+      if (student.classroom) {
+        student.classroom = false;
+      }
+    }
+    studentsInClass = 0;
     gameState = "nextScreen";
     activeStudents = [];
     backgroundSound.pause();
@@ -617,14 +623,12 @@ function classroomCheck(student) {
   ) {
     student.classroom = true;
     studentsInClass = studentsInClass + 1;
-    console.log(studentsInClass);
   } else if (
     student.classroom === true &&
     (student.x < 3 || student.x > 320 || student.y < 0 || student.y > 380)
   ) {
     student.classroom = false;
     studentsInClass = studentsInClass - 1;
-    console.log(studentsInClass);
   }
 }
 //comparing array order
