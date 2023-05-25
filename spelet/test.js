@@ -708,7 +708,7 @@ function mousePressed() {
     }
     if (
       dist(mouseX, mouseY, width / 2 - 80, height - 200) < 25 &&
-      studentNumber > 0
+      studentNumber > 1
     ) {
       studentNumber = studentNumber - 1;
     }
