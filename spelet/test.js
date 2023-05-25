@@ -1,8 +1,22 @@
+//arrays
 let studentsArray = [];
 let activeStudents = [];
 let talkingGarritArray = [];
-let lifted = undefined;
+
+//start
 let gameState = "startScreen";
+let counter = 0;
+
+/*
+
+
+
+
+
+
+STUDENT OBJECTS
+
+*/
 
 // Create objects for each student and store their information
 let student1 = {
@@ -101,6 +115,17 @@ let student6 = {
   classroom: false,
 };
 
+/*
+
+
+
+
+
+
+LOADING IMAGES AND PUSH INTO ARRAY
+
+*/
+
 function preload() {
   // Student 1
   student1.modes.still.push(loadImage("images/1.png"));
@@ -156,7 +181,8 @@ function preload() {
 
   //loadingg the image of classroom
   classroomImage = loadImage("images/classroom.png");
-  //prigress bar
+
+  //progress bar
   progressGarrit = loadImage("images/progressCircle.png");
   progressGarritSad = loadImage("images/progressCircleSad.png");
   progressGarritHappy = loadImage("images/progressCircleHappy.png");
@@ -169,19 +195,34 @@ function preload() {
   talkingGarritArray.push(talkingGarrit1, talkingGarrit2, talkingGarrit3);
 }
 
-let counter = 0;
-let studentNumber = 1;
-let lifeTimer = 300;
-let classroomLifeTimer = 500;
+/*
 
-let studentsInClass = 0;
-let clickableButton = false;
+
+
+
+
+
+SETUP
+
+*/
 
 function setup() {
-  createCanvas(screen.width - 30, screen.height - 170);
+  createCanvas(screen.width, screen.height - 220);
   frameRate(60);
 }
 
+/*
+
+
+
+
+
+
+SOUNDS
+
+*/
+
+//variables for sound functions
 const talkingGarrit = document.createElement("audio");
 const talkingGarritSource = document.createElement("source");
 
@@ -194,6 +235,7 @@ const pickSoundSource = document.createElement("source");
 const placeSound = document.createElement("audio");
 const placeSoundSource = document.createElement("source");
 
+//sound functions
 function talkingGarritFunction() {
   talkingGarritSource.setAttribute("src", "sound/talking.mp3");
   talkingGarritSource.setAttribute("type", "audio/mpeg");
@@ -207,8 +249,6 @@ function talkingGarritFunction() {
 
   talkingGarrit.play();
 }
-
-talkingGarritFunction();
 
 function happySoundFunction() {
   happySoundSource.setAttribute("src", "sound/happy.mp3");
@@ -248,6 +288,17 @@ function placeSoundFunction() {
   placeSound.play();
 }
 
+/*
+
+
+
+
+
+
+START SCREEN
+
+*/
+
 let startButton;
 let increaseButton;
 let decreaseButton;
@@ -264,24 +315,24 @@ function startScreen() {
 
   textFont("monospace");
   textStyle(BOLD);
-  //circle(width / 2, height / 2 - 50, 200);
+
   push();
   push();
   stroke(0, 0, 0);
   strokeWeight(4);
   beginShape();
   vertex(width / 2 + 20, height / 2 - 20);
-  vertex(width / 2 + 60, height / 2 - 82);
+  vertex(width / 2 + 95, height / 2 - 100);
   bezierVertex(
-    width / 2 + 60,
-    height / 2 - 82,
-    width / 2 + 50,
-    height / 3 - 5,
-    width / 2 + 50,
+    width / 2 + 95,
+    height / 2 - 100,
+    width / 2 + 85,
+    height / 3 + 5,
+    width / 2 + 80,
     height / 3 - 30
   );
   bezierVertex(
-    width / 2 + 50,
+    width / 2 + 80,
     height / 3 - 30,
     width / 2 + 50,
     height / 3 - 150,
@@ -384,6 +435,17 @@ function startScreen() {
   pop();
 }
 
+/*
+
+
+
+
+
+
+NEXT SCREEN
+
+*/
+
 function nextScreen() {
   textFont("monospace");
   textAlign(LEFT);
@@ -483,7 +545,19 @@ function drawStudents(student) {
   }
 }
 
-//if in classroom change to another lifetimer
+/*
+
+
+
+
+
+
+WALKING / STILL AND DIRECTION
+
+*/
+
+let lifeTimer = 300;
+
 function updateStudents(student) {
   if (student.currentMode !== "dragged") {
     if (student.maxlife === undefined) {
@@ -518,6 +592,17 @@ function updateStudents(student) {
   }
 }
 
+/*
+
+
+
+
+
+
+SPAWN STUDENTS AS INDIVIDUAL OBJECTS
+
+*/
+
 function spawnStudents() {
   if (activeStudents.length === 0) {
     for (let i = 0; i < studentNumber; i++) {
@@ -535,6 +620,17 @@ function spawnStudents() {
   }
 }
 
+/*
+
+
+
+
+
+
+STUDENTS WALK IN ON OPPOSITE SIDE 
+
+*/
+
 function offScreenWalk(student) {
   if (student.x < -50) {
     student.x = width;
@@ -547,8 +643,35 @@ function offScreenWalk(student) {
   }
 }
 
+/*
+
+
+
+
+
+
+EVERYTHING FOR MOUSE PRESSED
+
+*/
+
+let lifted = undefined;
+let clickableButton = false;
+let studentNumber = 1;
+
+//first screen page
+const firstScreenElement = document.querySelector(".firstscreen");
+firstScreenElement.style.display = "block";
+
 function mousePressed() {
+  //hide first screen and play talking sound
+  if (firstScreenElement.style.display === "block") {
+    firstScreenElement.style.display = "none";
+    talkingGarritFunction();
+  }
+
+  //clicking garrit button and finished game
   let distGarritButton = dist(width - 196, height - 110, mouseX, mouseY);
+
   if (clickableButton === true && distGarritButton < 120) {
     for (student of activeStudents) {
       if (student.classroom) {
@@ -559,9 +682,10 @@ function mousePressed() {
     studentsInClass = 0;
     gameState = "nextScreen";
     activeStudents = [];
-    backgroundSound.pause();
     talkingGarrit.pause();
   }
+
+  //picking upp student and pick up sound
   for (student of activeStudents) {
     if (
       mouseX > student.x &&
@@ -572,11 +696,12 @@ function mousePressed() {
       pickSoundFunction();
       lifted = student;
       student.currentMode = "dragged";
-      console.log(student);
 
       break;
     }
   }
+
+  //Increase and decrease button
   if (gameState === "startScreen" || gameState === "nextScreen") {
     if (dist(mouseX, mouseY, width / 2 + 80, height - 200) < 25) {
       studentNumber = studentNumber + 1;
@@ -587,6 +712,8 @@ function mousePressed() {
     ) {
       studentNumber = studentNumber - 1;
     }
+
+    //start game with start button, spawn students in random places and pause other sounds
     if (
       mouseX > width / 2 - 95 &&
       mouseX < width / 2 + 95 &&
@@ -600,12 +727,22 @@ function mousePressed() {
       spawnStudents();
 
       gameState = "gameScreen";
-      //backgroundMusicFunction();
       talkingGarrit.pause();
       happySound.pause();
     }
   }
 }
+
+/*
+
+
+
+
+
+
+MATCH MOUSE-X/Y TO STUDENT
+
+*/
 
 function mouseDragged() {
   if (lifted !== undefined) {
@@ -613,6 +750,17 @@ function mouseDragged() {
     student.y = mouseY - 50;
   }
 }
+
+/*
+
+
+
+
+
+
+RELEASE STUDENT AND PLACE SOUND
+
+*/
 
 function mouseReleased() {
   if (lifted !== undefined) {
@@ -623,7 +771,19 @@ function mouseReleased() {
   }
 }
 
-// for every student if student.classroom === true then +1 else +0 in a completedStudents variable
+/*
+
+
+
+
+
+
+CHECK IF STUDENT IS INSIDE CLASSROOM AND UPDATE NUMBER ON GARRIT BUTTON
+
+*/
+
+let studentsInClass = 0;
+
 function classroomCheck(student) {
   if (
     student.classroom === false &&
@@ -642,10 +802,32 @@ function classroomCheck(student) {
     studentsInClass = studentsInClass - 1;
   }
 }
-//comparing array order
+
+/*
+
+
+
+
+
+
+COMPARES STUDENTS AND CHANGES ORDER IN ARRAY, WHO IS SHOWN IN FRONT
+
+*/
+
 function compareNumbers(a, b) {
   return a.y - b.y;
 }
+
+/*
+
+
+
+
+
+
+DRAW GARRIT BUTTON, GARRIT MOODS, BLINKING BUTTON WHEN DONE
+
+*/
 
 function drawProgressBar() {
   noStroke();
@@ -683,7 +865,13 @@ function drawProgressBar() {
   circle(width - 196, height - 110, 160, 160);
   pop();
   push();
-  fill("DarkOrange");
+
+  colorMode(HSB, 100);
+  if (studentsInClass === activeStudents.length) {
+    fill(5, (frameCount % 20) + 50, 100);
+  } else {
+    fill(5, 70, 100);
+  }
   arc(
     width - 196,
     height - 110,
@@ -700,7 +888,7 @@ function drawProgressBar() {
 
   colorMode(HSB, 100);
   if (studentsInClass === activeStudents.length) {
-    fill(34, (frameCount % 20) + 10, 85);
+    fill(34, (frameCount % 20) + 3, 85);
   } else {
     fill(34, 30, 85);
   }
@@ -725,14 +913,35 @@ function drawProgressBar() {
   text(activeStudents.length, width - 196, height - 65);
 }
 
+/*
+
+
+
+
+
+
+ACTIVATE GARRIT BUTTON
+
+*/
+
 function activateButton() {
   if (studentsInClass / activeStudents.length === 1) {
-    console.log("yeee");
     clickableButton = true;
   } else {
     clickableButton = false;
   }
 }
+
+/*
+
+
+
+
+
+
+STUDENTS RUN AWAY WHEN CURSOR APPROACHES
+
+*/
 
 function runFromCursor() {
   for (let i = 0; i < activeStudents.length; i++) {
@@ -741,21 +950,31 @@ function runFromCursor() {
       let x = student.x;
       let y = student.y;
 
-      // Check the distance between the student and the mouse
       let distance = dist(mouseX, mouseY, x, y);
 
       // Set the direction based on the mouse position
-      let directionX = mouseX < x ? 1 : -1; // -1 for left, 1 for right
-      let directionY = mouseY < y ? 1 : -1; // -1 for left, 1 for right
+      let directionX = mouseX < x ? 1 : -1; // -1 = left, 1 = right
+      let directionY = mouseY < y ? 1 : -1;
 
       // Update the student's position based on the distance and direction
       if (distance < 100) {
-        student.x += directionX * 1.5; // Adjust the speed of movement as needed
+        student.x += directionX * 1.5;
         student.y += directionY * 1.5;
       }
     }
   }
 }
+
+/*
+
+
+
+
+
+
+DRAWING ALL NECESSARY FUNCTIONS, CHANGING GAME STATES
+
+*/
 
 function draw() {
   background("pink");
@@ -774,7 +993,6 @@ function draw() {
     activeStudents.sort(compareNumbers);
 
     //make them run
-
     runFromCursor();
     for (let student of activeStudents) {
       updateStudents(student);
